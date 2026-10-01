@@ -1,91 +1,108 @@
 import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
+import cv2 as cv
 
-def seleccionar_imagen():
-    ruta = filedialog.askopenfilename(
-        title="Seleccionar imagen",
-        filetypes=[("Imagen BMP", "*.bmp")]
+def crear_interfaz(funcion_proc):
+    ruta_glob = ""
+
+    def seleccionar_imagen():
+        nonlocal ruta_glob
+        ruta = filedialog.askopenfilename(
+            title="Seleccionar imagen",
+            filetypes=[("Imagen BMP", "*.bmp")]
+        )
+
+        if ruta:
+            ruta_glob = ruta
+            etiqueta_ruta.config(text=ruta)
+
+            imagen = Image.open(ruta)
+            imagen.thumbnail((400, 250))
+
+            imagen_tk = ImageTk.PhotoImage(imagen)
+
+            etiqueta_imagen.config(image=imagen_tk)
+            etiqueta_imagen.image = imagen_tk
+
+            boton_analizar.config(state="normal")
+
+
+    def analizar_imagen():
+        nonlocal ruta_glob
+        if not ruta_glob:
+            return
+        etiqueta_resultados.config(text="Analizando imagen...")
+        ventana.update_idletasks()
+
+        text_res, img_proc = funcion_proc(ruta_glob)
+        etiqueta_resultados.config(text=text_res)
+        if img_proc is not None:
+            cv.namedWindow("Resultado Figuras y Colores", cv.WINDOW_NORMAL)
+            cv.resizeWindow("Resultado Figuras y Colores", 1100, 750)
+            cv.imshow("Resultado Figuras y Colores", img_proc)
+            cv.waitKey(0)
+            cv.destroyAllWindows()
+
+
+    ventana = tk.Tk()
+
+    ventana.title("Reconocimiento de Figuras")
+    ventana.geometry("700x700")
+
+
+    titulo = tk.Label(
+        ventana,
+        text="Reconocimiento de Figuras",
+        font=("Arial", 20)
     )
 
-    if ruta:
-        etiqueta_ruta.config(text=ruta)
-
-        imagen = Image.open(ruta)
-        imagen.thumbnail((400, 250))
-
-        imagen_tk = ImageTk.PhotoImage(imagen)
-
-        etiqueta_imagen.config(image=imagen_tk)
-        etiqueta_imagen.image = imagen_tk
-
-        boton_analizar.config(state="normal")
+    titulo.pack(pady=20)
 
 
-def analizar_imagen():
-    etiqueta_resultados.config(
-        text="Esperando resultados del módulo de reconocimiento..."
+    boton_seleccionar = tk.Button(
+        ventana,
+        text="Seleccionar imagen",
+        font=("Arial", 12),
+        command=seleccionar_imagen
     )
 
-
-ventana = tk.Tk()
-
-ventana.title("Reconocimiento de Figuras")
-ventana.geometry("700x700")
+    boton_seleccionar.pack(pady=10)
 
 
-titulo = tk.Label(
-    ventana,
-    text="Reconocimiento de Figuras",
-    font=("Arial", 20)
-)
+    etiqueta_ruta = tk.Label(
+        ventana,
+        text="No se ha seleccionado ninguna imagen",
+        wraplength=600
+    )
 
-titulo.pack(pady=20)
-
-
-boton_seleccionar = tk.Button(
-    ventana,
-    text="Seleccionar imagen",
-    font=("Arial", 12),
-    command=seleccionar_imagen
-)
-
-boton_seleccionar.pack(pady=10)
+    etiqueta_ruta.pack(pady=10)
 
 
-etiqueta_ruta = tk.Label(
-    ventana,
-    text="No se ha seleccionado ninguna imagen",
-    wraplength=600
-)
+    etiqueta_imagen = tk.Label(ventana)
 
-etiqueta_ruta.pack(pady=10)
+    etiqueta_imagen.pack(pady=10)
 
 
-etiqueta_imagen = tk.Label(ventana)
+    boton_analizar = tk.Button(
+        ventana,
+        text="Analizar imagen",
+        font=("Arial", 12),
+        command=analizar_imagen,
+        state="disabled"
+    )
 
-etiqueta_imagen.pack(pady=10)
-
-
-boton_analizar = tk.Button(
-    ventana,
-    text="Analizar imagen",
-    font=("Arial", 12),
-    command=analizar_imagen,
-    state="disabled"
-)
-
-boton_analizar.pack(pady=15)
+    boton_analizar.pack(pady=15)
 
 
-etiqueta_resultados = tk.Label(
-    ventana,
-    text="",
-    font=("Arial", 11),
-    wraplength=600
-)
+    etiqueta_resultados = tk.Label(
+        ventana,
+        text="",
+        font=("Arial", 11),
+        wraplength=600
+    )
 
-etiqueta_resultados.pack(pady=10)
+    etiqueta_resultados.pack(pady=10)
 
 
-ventana.mainloop()
+    return ventana
