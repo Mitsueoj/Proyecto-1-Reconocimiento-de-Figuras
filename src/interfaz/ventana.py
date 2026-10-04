@@ -94,7 +94,7 @@ def crear_interfaz(funcion_proc):
 
     etiqueta_resultados = tk.Label(
         ventana,
-        text="",
+        text="Seleccione una imagen y presione Analizar imagen",
         font=("Arial", 11),
         wraplength=800
     )
