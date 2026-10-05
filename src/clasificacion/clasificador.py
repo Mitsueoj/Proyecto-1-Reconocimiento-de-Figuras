@@ -4,7 +4,7 @@ import numpy as np
 """
  Función que determina qué figura geométrica es a partir de su estructura y propiedades.
  Recibe el contorno de un objeto y devuelve "C" si es un cuadrilátero, "T" si es un
- triángulo, "O" si es un círculo y X si es otra figura.
+ triángulo, "O" si es un círculo y "X" si es otra figura.
 """
 def clasificar_figura(contorno_exterior, contornos_internos=None):
     if contorno_exterior is None or len(contorno_exterior) < 3:

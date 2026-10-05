@@ -3,12 +3,22 @@ from tkinter import filedialog, scrolledtext, messagebox
 from PIL import Image, ImageTk
 import cv2 as cv
 
-
+"""
+ Función que crea la interfaz principal del programa.
+ Recibe una función externa que procesa la imagen.
+ Regresa una ventana con la configuración predefinida
+"""
 def crear_interfaz(funcion_procesar_imagen):
     ruta_glob = ""
     imagen_resultado_glob = None
     reporte_texto_glob = ""
 
+    """
+     Función que abre una ventana con el explorador de archivos en la interfaz
+     para elegir la imagen deseada con terminación .bmp
+     Se encarga además de cargar la vista previa de la imagen seleccionada y de controlar
+     los estados de los botones y caja de texto
+    """
     def seleccionar_imagen():
         nonlocal ruta_glob, imagen_resultado_glob, reporte_texto_glob
 
@@ -55,6 +65,11 @@ def crear_interfaz(funcion_procesar_imagen):
                     f"No se pudo cargar la imagen seleccionada:\n{e}"
                 )
 
+    """
+     Función que se encarga de cambiar las etiquetas, además de
+     mandar llamar a la función externa para procesar la imagen seleccionada
+     y actualizar en la caja de texto los colores, y mostrar la imagen procesada
+    """
     def analizar_imagen():
         nonlocal ruta_glob, imagen_resultado_glob, reporte_texto_glob
 
@@ -139,6 +154,10 @@ def crear_interfaz(funcion_procesar_imagen):
             boton_descargar.config(state="normal")
             boton_copiar_reporte.config(state="normal")
 
+    """
+     Función que permite imprimir el reporte de las figuras y sus colores encontrados
+     en la terminal además de copiarlo al portapapeles 
+    """
     def imprimir_y_copiar_reporte():
         nonlocal reporte_texto_glob
 
@@ -155,6 +174,10 @@ def crear_interfaz(funcion_procesar_imagen):
             text="Reporte enviado a terminal y copiado al portapapeles."
         )
 
+    """
+     Función que permite descargar la imagen resultante
+     después de haberla analizado o procesado
+    """
     def descargar_imagen_resultado():
         if imagen_resultado_glob is None:
             return
@@ -175,6 +198,7 @@ def crear_interfaz(funcion_procesar_imagen):
                 imagen_resultado_glob
             )
 
+    #Configuración de la ventana
     ventana = tk.Tk()
 
     ventana.title("Proyecto 1: Reconocimiento de Figuras")
